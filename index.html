@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Random Name Picker</title>
+	<script>
+		function addName() {
+			var nameInput = document.createElement("input");
+			nameInput.type = "text";
+			nameInput.name = "name";
+			nameInput.required = true;
+			document.getElementById("nameList").appendChild(nameInput);
+		}
+
+		function pickRandomNames() {
+			var names = [];
+			var nameInputs = document.getElementsByName("name");
+			for (var i = 0; i < nameInputs.length; i++) {
+				names.push(nameInputs[i].value.trim());
+			}
+
+			if (names.length > 0) {
+				var randomizedLists = [];
+				for (var i = 0; i < 10; i++) {
+					var randomizedNames = randomizeList(names.slice(0));
+					var randomizedList = [];
+					for (var j = 0; j < names.length; j++) {
+						var index = names.indexOf(names[j]);
+						var newPosition = getNewPosition(j, randomizedList.length);
+						randomizedList.splice(newPosition, 0, randomizedNames[index]);
+					}
+					randomizedLists.push(randomizedList);
+				}
+				randomizedLists = randomizeList(randomizedLists);
+				var listHTML = "";
+				for (var i = 0; i < randomizedLists.length; i++) {
+					listHTML += "<ul>";
+					for (var j = 0; j < randomizedLists[i].length; j++) {
+						listHTML += "<li>" + randomizedLists[i][j] + "</li>";
+					}
+					listHTML += "</ul>";
+				}
+				document.getElementById("result").innerHTML = listHTML;
+			} else {
+				document.getElementById("result").innerHTML = "Please enter at least one name.";
+			}
+		}
+
+		function randomizeList(list) {
+			var randomizedList = list.slice(0);
+			for (var i = randomizedList.length - 1; i > 0; i--) {
+				var j = Math.floor(Math.random() * (i + 1));
+				var temp = randomizedList[i];
+				randomizedList[i] = randomizedList[j];
+				randomizedList[j] = temp;
+			}
+			return randomizedList;
+		}
+
+		function getNewPosition(currentPosition, listLength) {
+			var newPosition = Math.floor(Math.random() * (listLength + 1));
+			if (newPosition >= currentPosition) {
+				newPosition++;
+			}
+			return newPosition;
+		}
+	</script>
+	<style>
+		label {
+			display: block;
+			margin-bottom: 10px;
+		}
+		input[type="text"] {
+			display: block;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Random Name Picker</h1>
+	<p>Enter the names you want to pick from, then click "Pick Names" to display ten randomized lists with the same names.</p>
+	<form>
+		<div id="nameList">
+			<label for="name">Name 1:</label>
+			<input type="text" name="name" required>
+		</div>
+		<button type="button" onclick="addName()">+</button>
+		<button type="button" onclick="pickRandomNames()">Pick Names</button>
+	</form>
+	<div id="result"></div>
+</body>
+</html>
