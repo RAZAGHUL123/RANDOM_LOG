@@ -66,9 +66,8 @@
 	</script>
 	<style>
 		body {
-  background-color: #ffffe6;
-}
-
+			background-color: #ffffe6;
+		}
 		label {
 			display: block;
 			margin-bottom: 10px;
@@ -77,6 +76,23 @@
 			display: block;
 			margin-bottom: 10px;
 		}
+        #stopwatch-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 20px;
+	font-size: 36px;
+}
+
+#stopwatch {
+	margin-right: 20px;
+}
+
+#start-stopwatch, #stop-stopwatch, #reset-stopwatch {
+	font-size: 24px;
+	padding: 10px 20px;
+}
+
 	</style>
 </head>
 <body>
@@ -91,5 +107,71 @@
 		<button type="button" onclick="pickRandomNames()">Pick Names</button>
 	</form>
 	<div id="result"></div>
+
+    <hr>
+    <div id="stopwatch-container">
+		<span id="stopwatch">00:00:00.000</span>
+		<button id="start-stopwatch">Start</button>
+		<button id="stop-stopwatch" disabled>Stop</button>
+		<button id="reset-stopwatch" disabled>Reset</button>
+	</div>
+      <script>
+        var stopwatchInterval;
+var startTime;
+var elapsedTime = 0;
+var stopwatchElement = document.getElementById("stopwatch");
+var startButton = document.getElementById("start-stopwatch");
+var stopButton = document.getElementById("stop-stopwatch");
+var resetButton = document.getElementById("reset-stopwatch");
+
+function formatTime(time) {
+	var hours = Math.floor(time / (60 * 60 * 1000));
+	var minutes = Math.floor(time / (60 * 1000)) % 60;
+	var seconds = Math.floor(time / 1000) % 60;
+	var milliseconds = time % 1000;
+
+	var formattedTime = "";
+	if (hours > 0) {
+		formattedTime += hours.toString().padStart(2, "0") + ":";
+	}
+	formattedTime += minutes.toString().padStart(2, "0") + ":";
+	formattedTime += seconds.toString().padStart(2, "0") + ".";
+	formattedTime += milliseconds.toString().padStart(3, "0");
+
+	return formattedTime;
+}
+
+function updateStopwatch() {
+	elapsedTime = Date.now() - startTime;
+	stopwatchElement.innerText = formatTime(elapsedTime);
+}
+
+function startStopwatch() {
+	startTime = Date.now();
+	stopwatchInterval = setInterval(updateStopwatch, 10);
+	startButton.disabled = true;
+	stopButton.disabled = false;
+	resetButton.disabled = true;
+}
+
+function stopStopwatch() {
+	clearInterval(stopwatchInterval);
+	startButton.disabled = false;
+	stopButton.disabled = true;
+	resetButton.disabled = false;
+}
+
+function resetStopwatch() {
+	elapsedTime = 0;
+	stopwatchElement.innerText = formatTime(elapsedTime);
+	resetButton.disabled = true;
+}
+
+startButton.addEventListener("click", startStopwatch);
+stopButton.addEventListener("click", stopStopwatch);
+resetButton.addEventListener("click", resetStopwatch);
+
+      </script>
+        
 </body>
 </html>
